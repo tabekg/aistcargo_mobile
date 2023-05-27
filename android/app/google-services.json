@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "261621588901",
+    "project_id": "aistcargo",
+    "storage_bucket": "aistcargo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261621588901:android:977cea83438ee2ef753e4c",
+        "android_client_info": {
+          "package_name": "kg.besoft.aistcargo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "261621588901-g98492sqakh0n7n7kugnt5d1vai3k2is.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpbTJMePNFbEM9-r-d4skCGLYncqb1YIw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "261621588901-g98492sqakh0n7n7kugnt5d1vai3k2is.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "261621588901-g95bfd216gcm5qhs383vg0dq7l7r5d61.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "kg.besoft.aistcargo.aistcargo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
