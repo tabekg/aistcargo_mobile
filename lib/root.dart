@@ -1,34 +1,38 @@
-import 'package:aistcargo/screens/auth_screen.dart';
+import 'package:aistcargo/bloc/auth_bloc/auth_bloc.dart';
+import 'package:aistcargo/screens/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 
-class Root extends StatelessWidget {
+class Root extends StatefulWidget {
   const Root({super.key});
 
   @override
+  State<Root> createState() => _RootState();
+}
+
+class _RootState extends State<Root> {
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        PhoneFieldLocalization.delegate,
-      ],
-      supportedLocales: const [
-        Locale('ru', 'RU'),
-      ],
-      title: 'AistCargo',
-      theme: ThemeData(
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+    AuthBloc authBloc = AuthBloc();
+    return BlocProvider(
+      create: (context) => authBloc,
+      child: MaterialApp(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          PhoneFieldLocalization.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ru', 'RU'),
+        ],
+        title: 'AistCargo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MainScreen(),
       ),
-      home: const AuthScreen(),
     );
   }
 }
