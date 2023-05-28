@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  date_time_picker:
+    dependency: "direct main"
+    description:
+      name: date_time_picker
+      sha256: "6923c568bcb67a66ab7e083708d0adbcae8214b41bb84d49febc17e89e06fc4a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   diacritic:
     dependency: transitive
     description:
@@ -158,6 +166,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_awesome_select:
+    dependency: "direct main"
+    description:
+      name: flutter_awesome_select
+      sha256: f7beb2704bd3128e4bcd6931e741971cdebf5e13ef01e8e090349f89699e1d12
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.0"
   flutter_bloc:
     dependency: "direct main"
     description:

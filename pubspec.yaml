@@ -42,6 +42,8 @@ dependencies:
   flutter_bloc: ^8.0.0
   pinput: ^2.2.31
   bloc: ^8.1.2
+  flutter_awesome_select: ^6.5.0
+  date_time_picker: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -64,9 +66,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/logo-aist-cargo.png
+    - assets/3280116.png
+    - assets/573320.png
+    - assets/7637464.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
