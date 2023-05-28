@@ -44,6 +44,7 @@ dependencies:
   bloc: ^8.1.2
   flutter_awesome_select: ^6.5.0
   date_time_picker: ^2.1.0
+  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_test:
