@@ -1,9 +1,9 @@
+import 'package:aistcargo/api/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/auth_bloc/auth_bloc.dart';
-import '../models/user.dart' as UserModel;
 import 'auth_screen.dart';
 import 'home_screen.dart';
 
@@ -20,11 +20,15 @@ class _MainScreenState extends State<MainScreen> {
       if (user == null) {
         BlocProvider.of<AuthBloc>(context).add(AuthSignOutEvent());
       } else {
-        BlocProvider.of<AuthBloc>(context).add(
-          AuthSignInEvent(
-            user: UserModel.User(firebaseUid: user.uid),
-          ),
-        );
+        fetchCurrentUser().then((value) {
+          if (value != null) {
+            BlocProvider.of<AuthBloc>(context).add(
+              AuthSignInEvent(
+                user: value,
+              ),
+            );
+          }
+        });
       }
     });
   }
