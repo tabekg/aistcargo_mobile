@@ -37,7 +37,7 @@ class DeliveryTypesList {
 final DeliveryTypesList deliveryTypesList = DeliveryTypesList(
   list: [
     DeliveryType(
-      name: 'airplain',
+      name: 'airplane',
       title: 'Самолетом',
       imageAsset: 'assets/3280116.png',
       plans: {},
