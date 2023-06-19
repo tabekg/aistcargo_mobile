@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class HomeBoxItemWidget extends StatelessWidget {
   final List<Widget> children;
   final Color color;
-  final Function() onTap;
+  final Function()? onTap;
 
   const HomeBoxItemWidget({
     super.key,
     required this.children,
     required this.color,
-    required this.onTap,
+    this.onTap,
   });
 
   @override
@@ -17,6 +17,7 @@ class HomeBoxItemWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: InkWell(
+        borderRadius: BorderRadius.circular(10.0),
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(

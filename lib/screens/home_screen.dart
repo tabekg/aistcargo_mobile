@@ -3,12 +3,14 @@ import 'package:aistcargo/utils/config.dart';
 import 'package:aistcargo/widgets/home_box_item_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/index.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final DeliveryType airplainType = deliveryTypesList.getByName('airplain')!;
+    final DeliveryType airplaneType = deliveryTypesList.getByName('airplane')!;
     final DeliveryType carType = deliveryTypesList.getByName('car')!;
     final DeliveryType truckType = deliveryTypesList.getByName('truck')!;
 
@@ -82,18 +84,18 @@ class HomeScreen extends StatelessWidget {
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => CreateDeliveryScreen(
-                            deliveryType: airplainType,
+                            deliveryType: airplaneType,
                           ),
                         ),
                       ),
-                      color: airplainType.color,
+                      color: airplaneType.color,
                       children: [
                         Image.asset(
-                          airplainType.imageAsset,
+                          airplaneType.imageAsset,
                           height: 35,
                         ),
                         Text(
-                          airplainType.title,
+                          airplaneType.title,
                           textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
@@ -108,22 +110,22 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    HomeBoxItemWidget(
-                      onTap: () => null,
-                      color: const Color(0x4DFFB900),
+                    const HomeBoxItemWidget(
+                      onTap: null,
+                      color: Color(0x4DFFB900),
                       children: [
-                        Text(
-                          'ПОИСК',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        Text(
-                          'доставщика',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontSize: 13),
-                        ),
+                        // Text(
+                        //   'ПОИСК',
+                        //   style: Theme.of(context).textTheme.bodyLarge,
+                        // ),
+                        // Text(
+                        //   'доставщика',
+                        //   textAlign: TextAlign.center,
+                        //   style: Theme.of(context)
+                        //       .textTheme
+                        //       .bodyMedium
+                        //       ?.copyWith(fontSize: 13),
+                        // ),
                       ],
                     ),
                     HomeBoxItemWidget(
@@ -171,8 +173,8 @@ class HomeScreen extends StatelessWidget {
             label: 'Главная',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Создать',
+            icon: Icon(Icons.search),
+            label: 'Поиск',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),

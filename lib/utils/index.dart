@@ -32,3 +32,15 @@ void showToastError(String text) {
     fontSize: 16.0,
   );
 }
+
+void showToastSuccess(String text) {
+  Fluttertoast.showToast(
+    msg: text,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 1,
+    backgroundColor: Colors.green,
+    textColor: Colors.white,
+    fontSize: 16.0,
+  );
+}

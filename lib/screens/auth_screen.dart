@@ -31,6 +31,7 @@ class _MyHomePageState extends State<AuthScreen> {
     });
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumberController.value!.international,
+      timeout: const Duration(seconds: 0),
       verificationCompleted: (PhoneAuthCredential credential) async {
         setState(() {
           loading = false;
