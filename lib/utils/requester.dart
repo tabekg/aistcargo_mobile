@@ -52,15 +52,21 @@ class Requester {
 
   Options options;
 
-  Future<HttpResponse> get(String path) async {
+  Future<HttpResponse> get(
+    String path, {
+    Map<String, dynamic> params = const {},
+    Map<String, String>? headers,
+  }) async {
     String? token = await getToken();
     try {
       final response = await dio.request(
         '/v1$path',
+        queryParameters: params,
         options: options.copyWith(
           method: 'GET',
           headers: <String, dynamic>{
             if (token != null) 'Authorization': 'Bearer $token',
+            ...(headers ?? {}),
           },
         ),
       );
@@ -90,6 +96,7 @@ class Requester {
     try {
       final response = await dio.request(
         '/v1$path',
+        queryParameters: params,
         options: options.copyWith(
           method: 'POST',
           headers: <String, dynamic>{

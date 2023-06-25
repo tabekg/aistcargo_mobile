@@ -8,10 +8,12 @@ class DeliveryType {
   Color color;
   List<ParcelType> parcelTypes;
   List<int> parcelWeights;
+  IconData icon;
 
   Map<int, int> variants;
 
   DeliveryType({
+    required this.icon,
     required this.name,
     required this.imageAsset,
     required this.plans,
@@ -45,6 +47,7 @@ final DeliveryTypesList deliveryTypesList = DeliveryTypesList(
       imageAsset: 'assets/3280116.png',
       plans: {},
       color: const Color(0x4DF74E1E),
+      icon: Icons.local_airport,
       parcelTypes: [
         ParcelType(title: 'Конверт', name: 'envelope'),
         ParcelType(title: 'Коробка', name: 'box'),
@@ -65,6 +68,7 @@ final DeliveryTypesList deliveryTypesList = DeliveryTypesList(
       imageAsset: 'assets/573320.png',
       plans: {},
       color: const Color(0x4D80BB00),
+      icon: Icons.local_taxi,
       parcelTypes: [
         ParcelType(title: 'Конверт', name: 'envelope'),
         ParcelType(title: 'Коробка', name: 'box'),
@@ -86,6 +90,7 @@ final DeliveryTypesList deliveryTypesList = DeliveryTypesList(
       imageAsset: 'assets/7637464.png',
       plans: {},
       color: const Color(0x4D00A3EE),
+      icon: Icons.local_shipping,
       parcelTypes: [],
       parcelWeights: [],
       variants: {
