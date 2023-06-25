@@ -1,3 +1,5 @@
+import 'package:aistcargo/models/point.dart';
+import 'package:aistcargo/models/user.dart';
 import 'package:intl/intl.dart';
 
 enum DeliveryBodyTypeEnum {
@@ -43,6 +45,11 @@ class Delivery {
   int toPointId;
   String? description;
 
+  Point? fromPoint;
+  Point? toPoint;
+
+  User? user;
+
   DateTime? createdAt;
   DateTime dateTime;
   int? weight;
@@ -54,9 +61,28 @@ class Delivery {
   DeliveryTypeEnum type;
   DeliveryStatusEnum? status;
 
+  String get typeTitle {
+    if (type == DeliveryTypeEnum.airplane) {
+      return 'самолетом';
+    }
+    if (type == DeliveryTypeEnum.car) {
+      return 'автомобилем';
+    }
+    if (type == DeliveryTypeEnum.truck) {
+      return 'грузовиком';
+    }
+    return 'неизвестно';
+  }
+
   Delivery.fromJson(Map<String, dynamic> json)
       : fromPointId = json['from_point_id'],
         toPointId = json['to_point_id'],
+        fromPoint = json['from_point'] != null
+            ? Point.fromJson(json['from_point'])
+            : null,
+        toPoint =
+            json['to_point'] != null ? Point.fromJson(json['to_point']) : null,
+        user = json['user'] != null ? User.fromJson(json['user']) : null,
         description = json['description'],
         createdAt = json['created_at'] != null
             ? DateTime.parse(json['created_at'])

@@ -1,172 +1,42 @@
-import 'package:aistcargo/screens/create_delivery_screen.dart';
-import 'package:aistcargo/utils/config.dart';
-import 'package:aistcargo/widgets/home_box_item_widget.dart';
+import 'package:aistcargo/screens/home_tab.dart';
+import 'package:aistcargo/screens/profile_tab.dart';
+import 'package:aistcargo/screens/search_tab.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/index.dart';
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final DeliveryType airplaneType = deliveryTypesList.getByName('airplane')!;
-    final DeliveryType carType = deliveryTypesList.getByName('car')!;
-    final DeliveryType truckType = deliveryTypesList.getByName('truck')!;
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedTabIndex = 0;
+
+  _onTabChanged(int index) {
+    setState(() {
+      _selectedTabIndex = index;
+    });
+  }
+
+  static final List<Widget> _pages = <Widget>[
+    const HomeTab(),
+    const SearchTab(),
+    const ProfileTab(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          const SizedBox(
-            height: 24,
-          ),
-          Image.asset(
-            'assets/logo-aist-cargo.png',
-            height: 103,
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          Text(
-            'AISTCARGO',
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(color: const Color(0xFF00A3EE)),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(
-            height: 22,
-          ),
-          Text(
-            'Разместите информацию о Ваших поездках, чтобы помочь другим людям с доставкой посылок',
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(
-            height: 70,
-          ),
-          RotationTransition(
-            turns: const AlwaysStoppedAnimation(-45 / 360),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    HomeBoxItemWidget(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CreateDeliveryScreen(
-                            deliveryType: carType,
-                          ),
-                        ),
-                      ),
-                      color: carType.color,
-                      children: [
-                        Image.asset(
-                          carType.imageAsset,
-                          height: 35,
-                        ),
-                        Text(
-                          carType.title,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontSize: 13),
-                        ),
-                      ],
-                    ),
-                    HomeBoxItemWidget(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CreateDeliveryScreen(
-                            deliveryType: airplaneType,
-                          ),
-                        ),
-                      ),
-                      color: airplaneType.color,
-                      children: [
-                        Image.asset(
-                          airplaneType.imageAsset,
-                          height: 35,
-                        ),
-                        Text(
-                          airplaneType.title,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const HomeBoxItemWidget(
-                      onTap: null,
-                      color: Color(0x4DFFB900),
-                      children: [
-                        // Text(
-                        //   'ПОИСК',
-                        //   style: Theme.of(context).textTheme.bodyLarge,
-                        // ),
-                        // Text(
-                        //   'доставщика',
-                        //   textAlign: TextAlign.center,
-                        //   style: Theme.of(context)
-                        //       .textTheme
-                        //       .bodyMedium
-                        //       ?.copyWith(fontSize: 13),
-                        // ),
-                      ],
-                    ),
-                    HomeBoxItemWidget(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CreateDeliveryScreen(
-                            deliveryType: truckType,
-                          ),
-                        ),
-                      ),
-                      color: truckType.color,
-                      children: [
-                        Image.asset(
-                          truckType.imageAsset,
-                          height: 35,
-                        ),
-                        Text(
-                          truckType.title,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                // ElevatedButton(
-                //   child: const Text('SignOut'),
-                //   onPressed: () {
-                //     FirebaseAuth auth = FirebaseAuth.instance;
-                //     auth.signOut();
-                //   },
-                // )
-              ],
-            ),
-          ),
-        ],
-      ),
+      appBar: _selectedTabIndex == 2
+          ? AppBar(
+              title: const Text('Профиль'),
+            )
+          : null,
+      body: _pages.elementAt(_selectedTabIndex),
       bottomNavigationBar: BottomNavigationBar(
+        onTap: _onTabChanged,
+        currentIndex: _selectedTabIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

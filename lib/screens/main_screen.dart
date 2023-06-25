@@ -1,13 +1,15 @@
-import 'package:aistcargo/api/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../api/user.dart';
 import '../bloc/auth_bloc/auth_bloc.dart';
 import 'auth_screen.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
