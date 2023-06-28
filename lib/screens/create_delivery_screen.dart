@@ -1,16 +1,20 @@
+import 'package:aistcargo/api/delivery.dart';
+import 'package:aistcargo/api/point.dart';
+import 'package:aistcargo/models/delivery.dart';
 import 'package:aistcargo/utils/config.dart';
+import 'package:aistcargo/utils/index.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_awesome_select/flutter_awesome_select.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../models/point.dart';
+import 'connect_tariff_screen.dart';
 
-final Map<int, String> bodyTypes = {
-  400: 'Малый кузов до 400 кг.',
-  1500: 'Средний кузов до 1.5 т.',
-  5000: 'Большой кузов до 5 т.',
-  20000: 'Фура до 20 т. и выше',
+final Map<DeliveryBodyTypeEnum, String> bodyTypes = {
+  DeliveryBodyTypeEnum.small: 'Малый кузов до 400 кг.',
+  DeliveryBodyTypeEnum.medium: 'Средний кузов до 1.5 т.',
+  DeliveryBodyTypeEnum.large: 'Большой кузов до 5 т.',
+  DeliveryBodyTypeEnum.truck: 'Фура до 20 т. и выше',
 };
 
 class CreateDeliveryScreen extends StatefulWidget {
@@ -27,10 +31,19 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   List<S2Choice<int>> parcelWeightChoice = [];
 
   ParcelType? selectedParcelType;
-  int? selectedBodyType;
+  DeliveryBodyTypeEnum? selectedBodyType;
   int? selectedParcelWeight;
   Point? selectedFromPoint;
   Point? selectedToPoint;
+
+  bool loading = false;
+
+  TextEditingController dateTimeEditingController = TextEditingController();
+  TextEditingController descriptionEditingController = TextEditingController();
+  TextEditingController plusMinusDaysEditingController =
+      TextEditingController();
+
+  List<Point> pointsList = [];
 
   @override
   void initState() {
@@ -47,16 +60,88 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
           (e) => S2Choice<int>(value: e, title: 'до $e кг.'),
         )
         .toList();
+
+    final now = DateTime.now();
+
+    dateTimeEditingController.text =
+        DateTime(now.year, now.month, now.day + 1, 8).toString();
+
+    _fetchPointsList();
   }
 
-  List<Point> pointsList = [
-    Point(title: 'Ош', id: 1),
-    Point(id: 2, title: 'Бишкек'),
-    Point(id: 3, title: 'Москва'),
-  ];
+  void _fetchPointsList() {
+    fetchPointsList().then((value) {
+      setState(() {
+        pointsList = value;
+      });
+    });
+  }
+
+  void submit() {
+    if (loading) {
+      return;
+    }
+    if (selectedFromPoint == null) {
+      showToastError('Укажите откуда забрать груз!');
+      return;
+    }
+    if (selectedToPoint == null) {
+      showToastError('Укажите куда доставить груз!');
+      return;
+    }
+    if (parcelWeightChoice.isNotEmpty && selectedParcelType == null) {
+      showToastError('Укажите тип посылки!');
+      return;
+    }
+    if (parcelWeightChoice.isNotEmpty && selectedParcelWeight == null) {
+      showToastError('Укажите вес посылки!');
+      return;
+    }
+    if (dateTimeEditingController.text.isEmpty) {
+      return;
+    }
+    if (widget.deliveryType.name == 'truck' && selectedBodyType == null) {
+      showToastError('Укажите тип кузова!');
+      return;
+    }
+    setState(() {
+      loading = true;
+    });
+    createDelivery(
+      Delivery(
+        fromPointId: selectedFromPoint!.id,
+        toPointId: selectedToPoint!.id,
+        description: descriptionEditingController.text,
+        weight: selectedParcelWeight,
+        dateTime: DateTime.parse(dateTimeEditingController.text),
+        bodyType: selectedBodyType,
+        type: DeliveryTypeEnum.values.firstWhere(
+          (element) =>
+              element.toString() ==
+              'DeliveryTypeEnum.${widget.deliveryType.name}',
+        ),
+      ),
+    ).then((value) {
+      if (value?.status == DeliveryStatusEnum.pending) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConnectTariffScreen(
+              typeName: value!.type,
+            ),
+          ),
+        );
+      }
+    }).whenComplete(() {
+      setState(() {
+        loading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Добавить доставку'),
@@ -86,64 +171,72 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
             child: Card(
               child: Column(
                 children: [
-                  SmartSelect<Point>.single(
-                    placeholder: 'Выберите',
-                    title: widget.deliveryType.name == 'airplain'
-                        ? 'Откуда'
-                        : 'Откуда забрать груз',
-                    selectedValue: selectedFromPoint ?? Point.empty(),
-                    choiceItems: pointsList
-                        .where((element) => element.id != selectedToPoint?.id)
-                        .map(
-                          (e) => S2Choice(
-                            value: e,
-                            title: e.title,
-                          ),
-                        )
-                        .toList(),
-                    onChange: (state) =>
-                        setState(() => selectedFromPoint = state.value),
-                  ),
-                  const Divider(
-                    height: 1,
-                  ),
-                  SmartSelect<Point>.single(
-                    placeholder: 'Выберите',
-                    title: widget.deliveryType.name == 'airplain'
-                        ? 'Куда'
-                        : 'Куда привезти груз',
-                    selectedValue: selectedToPoint ?? Point.empty(),
-                    choiceItems: pointsList
-                        .where((element) => element.id != selectedFromPoint?.id)
-                        .map(
-                          (e) => S2Choice(
-                            value: e,
-                            title: e.title,
-                          ),
-                        )
-                        .toList(),
-                    onChange: (state) =>
-                        setState(() => selectedToPoint = state.value),
-                  ),
-                  const Divider(
-                    height: 1,
-                  ),
-                  if (widget.deliveryType.name == 'truck')
-                    SmartSelect<int>.single(
+                  if (pointsList.isNotEmpty)
+                    SmartSelect<Point>.single(
                       placeholder: 'Выберите',
-                      title: 'Тип кузова',
-                      selectedValue: selectedBodyType ?? 0,
-                      choiceItems: bodyTypes.keys
+                      title: widget.deliveryType.name == 'airplane'
+                          ? 'Откуда'
+                          : 'Откуда забрать груз',
+                      selectedValue: selectedFromPoint ?? Point.empty(),
+                      choiceItems: pointsList
+                          .where((element) => element.id != selectedToPoint?.id)
                           .map(
-                            (value) => S2Choice(
-                              value: value,
-                              title: bodyTypes[value],
+                            (e) => S2Choice(
+                              value: e,
+                              title: e.titleRu,
                             ),
                           )
                           .toList(),
                       onChange: (state) =>
-                          setState(() => selectedBodyType = state.value),
+                          setState(() => selectedFromPoint = state.value),
                     ),
+                  if (pointsList.isNotEmpty)
+                    const Divider(
+                      height: 1,
+                    ),
+                  if (pointsList.isNotEmpty)
+                    SmartSelect<Point>.single(
+                      placeholder: 'Выберите',
+                      title: widget.deliveryType.name == 'airplane'
+                          ? 'Куда'
+                          : 'Куда привезти груз',
+                      selectedValue: selectedToPoint ?? Point.empty(),
+                      choiceItems: pointsList
+                          .where(
+                              (element) => element.id != selectedFromPoint?.id)
+                          .map(
+                            (e) => S2Choice(
+                              value: e,
+                              title: e.titleRu,
+                            ),
+                          )
+                          .toList(),
+                      onChange: (state) =>
+                          setState(() => selectedToPoint = state.value),
+                    ),
+                  if (pointsList.isNotEmpty)
+                    const Divider(
+                      height: 1,
+                    ),
+                  if (pointsList.isNotEmpty)
+                    if (widget.deliveryType.name == 'truck')
+                      SmartSelect<DeliveryBodyTypeEnum>.single(
+                        placeholder: 'Выберите',
+                        title: 'Тип кузова',
+                        modalType: S2ModalType.bottomSheet,
+                        selectedValue:
+                            selectedBodyType ?? DeliveryBodyTypeEnum.other,
+                        choiceItems: bodyTypes.keys
+                            .map(
+                              (value) => S2Choice(
+                                value: value,
+                                title: bodyTypes[value],
+                              ),
+                            )
+                            .toList(),
+                        onChange: (state) =>
+                            setState(() => selectedBodyType = state.value),
+                      ),
                   if (widget.deliveryType.name == 'truck')
                     const Divider(
                       height: 1,
@@ -152,6 +245,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                     SmartSelect<ParcelType>.single(
                       placeholder: 'Выберите',
                       title: 'Тип посылки',
+                      modalType: S2ModalType.bottomSheet,
                       selectedValue:
                           selectedParcelType ?? ParcelType(title: '', name: ''),
                       choiceItems: parcelTypeChoice,
@@ -166,6 +260,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                     SmartSelect<int>.single(
                       placeholder: 'Выберите',
                       title: 'Вес посылки',
+                      modalType: S2ModalType.bottomSheet,
                       selectedValue: selectedParcelWeight ?? 0,
                       choiceItems: parcelWeightChoice,
                       onChange: (state) =>
@@ -191,15 +286,14 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                             dateMask: widget.deliveryType.name == 'truck'
                                 ? 'dd.MM.yyyy'
                                 : 'dd.MM.yyyy HH:mm',
-                            initialValue: DateTime.now().toString(),
-                            firstDate: DateTime.now(),
-                            lastDate:
-                                DateTime.now().add(const Duration(days: 30)),
+                            firstDate:
+                                DateTime(now.year, now.month, now.day + 1),
+                            lastDate: now.add(const Duration(days: 30)),
                             icon: const Icon(Icons.event),
                             dateLabelText: widget.deliveryType.name == 'truck'
                                 ? 'Дата отправки'
                                 : 'Когда',
-                            onSaved: (val) => print(val),
+                            controller: dateTimeEditingController,
                           ),
                         ),
                         if (widget.deliveryType.name == 'truck')
@@ -208,10 +302,15 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                             style: TextStyle(fontSize: 24),
                           ),
                         if (widget.deliveryType.name == 'truck')
-                          const Flexible(
+                          Flexible(
                             flex: 1,
                             child: TextField(
-                              decoration: InputDecoration(
+                              controller: plusMinusDaysEditingController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                PlusMinusRangeTextInputFormatter(),
+                              ],
+                              decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 label: Text('дней'),
                               ),
@@ -226,6 +325,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      controller: descriptionEditingController,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         labelText: 'Опишите о доставке',
@@ -248,17 +348,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.yellow, width: 2),
               ),
-              onPressed: () {
-                Fluttertoast.showToast(
-                  msg: "Ошибка соединения с сервером!",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0,
-                );
-              },
+              onPressed: loading ? null : submit,
               child: const Text(
                 'Создать доставку',
                 style: TextStyle(

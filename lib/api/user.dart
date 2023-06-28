@@ -13,3 +13,21 @@ Future<User?> fetchCurrentUser() async {
     return null;
   }
 }
+
+Future<User?> updateProfile({
+  required String fullName,
+  required UserGenderEnum gender,
+}) async {
+  try {
+    final resp = await Requester().post('/user', body: {
+      'full_name': fullName,
+      'gender': gender.name,
+    });
+    if (resp.status != 'success') {
+      return null;
+    }
+    return User.fromJson(resp.payload);
+  } catch (_) {
+    return null;
+  }
+}
