@@ -1,8 +1,8 @@
 import 'package:aistcargo/models/delivery.dart';
 import 'package:aistcargo/utils/config.dart';
 import 'package:aistcargo/utils/index.dart';
-import 'package:aistcargo/utils/requester.dart';
 import 'package:flutter/material.dart';
+import 'package:yookassa_payments_flutter/yookassa_payments_flutter.dart';
 
 class PriceCardWidget extends StatelessWidget {
   const PriceCardWidget({
@@ -13,7 +13,7 @@ class PriceCardWidget extends StatelessWidget {
     required this.days,
   });
 
-  final Function(int days) onTap;
+  final Function(int days, int price) onTap;
   final Color color;
   final int price;
   final int days;
@@ -30,7 +30,7 @@ class PriceCardWidget extends StatelessWidget {
         width: 100,
         height: 100,
         child: InkWell(
-          onTap: () => onTap(days),
+          onTap: () => onTap(days, price),
           borderRadius: BorderRadius.circular(10.0),
           child: Center(
             child: Column(
@@ -38,7 +38,7 @@ class PriceCardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  '${price}Р',
+                  '${price}₽',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 Text(
@@ -69,28 +69,46 @@ class SelectPlanScreen extends StatefulWidget {
 class _SelectPlanScreenState extends State<SelectPlanScreen> {
   bool loading = false;
 
-  void subscribe(int days) {
-    setState(() {
-      loading = true;
-    });
-
-    print(days);
+  void subscribe(int days, int price) {
+    // setState(() {
+    //   loading = true;
+    // });
     showToastError('Тестовое подключение...');
 
-    Requester().post('/user/subscribe/test', body: {
-      'delivery_type': widget.typeName.name,
-      'days': days,
-    }).then((value) {
-      print(value.status);
-      if (value.status == 'success') {
-        showToastSuccess('Успешно подключено!');
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      }
-    }).whenComplete(() {
-      setState(() {
-        loading = false;
-      });
+    var clientApplicationKey =
+        "test_OTQ2NDg59jlL6Yg0c1tQJk1fOewqQHu_nQKIQgl2fx8";
+    var amount = Amount(value: price.toDouble(), currency: Currency.rub);
+    var shopId = "946489";
+    var tokenizationModuleInputData = TokenizationModuleInputData(
+      clientApplicationKey: clientApplicationKey,
+      title: "Подключение подписку",
+      subtitle: "Оплата за подписку за $days дней ($price₽)",
+      amount: amount,
+      shopId: shopId,
+      savePaymentMethod: SavePaymentMethod.off,
+      moneyAuthClientId: 'cjgq1f49q7e2b3bosduiue0n87npaavb',
+      tokenizationSettings: const TokenizationSettings(PaymentMethodTypes.all),
+    );
+
+    YookassaPaymentsFlutter.tokenization(tokenizationModuleInputData)
+        .then((value) {
+      print(value);
     });
+
+    // Requester().post('/user/subscribe/test', body: {
+    //   'delivery_type': widget.typeName.name,
+    //   'days': days,
+    // }).then((value) {
+    //   print(value.status);
+    //   if (value.status == 'success') {
+    //     showToastSuccess('Успешно подключено!');
+    //     Navigator.of(context).popUntil((route) => route.isFirst);
+    //   }
+    // }).whenComplete(() {
+    //   setState(() {
+    //     loading = false;
+    //   });
+    // });
   }
 
   @override

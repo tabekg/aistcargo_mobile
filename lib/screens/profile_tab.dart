@@ -1,5 +1,6 @@
 import 'package:aistcargo/bloc/auth_bloc/auth_bloc.dart';
 import 'package:aistcargo/models/user.dart';
+import 'package:aistcargo/utils/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,6 +67,7 @@ class _ProfileTabState extends State<ProfileTab> {
     ).then((v) {
       if (v != null) {
         BlocProvider.of<AuthBloc>(context).add(AuthSignInEvent(user: v));
+        showToastSuccess('Успешно сохранено!');
       }
     }).whenComplete(() {
       setState(() {
